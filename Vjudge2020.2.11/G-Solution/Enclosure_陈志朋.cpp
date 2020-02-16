@@ -2,7 +2,6 @@
 #define max(a, b) (a) > (b) ? (a) : (b)
 #define min(a, b) (a) < (b) ? (a) : (b)
 
-
 int I() {
     int s = 0, f = 1; char ch = getchar();
     while (ch < '0' || ch > '9') {if (ch == '-') f = -1; ch = getchar();}
@@ -39,22 +38,18 @@ struct node {
 int n, k, top;
 long long ans, sum[N], all;
 
-long long Abs(long long x) {
-    if (x < 0) return -x;
-    else return x;
-}
 bool cmp(node i, node j) {
     long long t = (i - a[1]) * (j - a[1]);
     return t > 0;
 }
-void tubao() {
+void build() {
     top = 2;
     for (int i = 3; i <= k; ++i) {
         while (top >= 2 && (a[i] - a[top - 1]) * (a[top] - a[top - 1]) > 0) top--;
         a[++top] = a[i];
     }
     for (int i = 3; i <= top; ++i) {
-        sum[i] = sum[i - 1] + Abs((a[i] - a[1]) * (a[i - 1] - a[1]));
+        sum[i] = sum[i - 1] + abs((a[i] - a[1]) * (a[i - 1] - a[1]));
     }
     ans = sum[top];
 }
@@ -101,8 +96,8 @@ void solve2(node p) {
     int r = fr(wz + 1, top, p);
     long long tmp = sum[top];
     tmp -= max(sum[min(r, top)] - sum[l], (long long)0);
-    tmp += Abs((p - a[1]) * (a[l] - a[1]));
-    tmp += Abs((a[(r - 1) % top + 1] - a[1]) * (p - a[1]));
+    tmp += abs((p - a[1]) * (a[l] - a[1]));
+    tmp += abs((a[(r - 1) % top + 1] - a[1]) * (p - a[1]));
     ans = max(ans, tmp);
 }
 void solve() {
@@ -131,7 +126,7 @@ int main () {
         }
     }
     std::sort(a + 2, a + k + 1, cmp);
-    tubao();
+    build();
     solve();
     all = ans;
 
@@ -145,7 +140,7 @@ int main () {
         }
     }
     std::sort(a + 2, a + k + 1, cmp);
-    tubao();
+    build();
     _solve();
     all = max(all, ans);
 

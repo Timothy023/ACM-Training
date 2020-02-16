@@ -2,7 +2,6 @@
 #define max(a, b) (a) > (b) ? (a) : (b)
 #define min(a, b) (a) < (b) ? (a) : (b)
 
-
 int I() {
     int s = 0, f = 1; char ch = getchar();
     while (ch < '0' || ch > '9') {if (ch == '-') f = -1; ch = getchar();}
@@ -19,6 +18,7 @@ void O(long long x) {
 }
 
 const int N = 1e5 + 5;
+const int lim = 200;
 struct node {
     long long x, y;
     node(){}
@@ -47,7 +47,7 @@ bool cmp(node i, node j) {
     long long t = (i - a[1]) * (j - a[1]);
     return t > 0;
 }
-void tubao() {
+void build() {
     top = 2;
     for (int i = 3; i <= k; ++i) {
         while (top >= 2 && (a[i] - a[top - 1]) * (a[top] - a[top - 1]) > 0) top--;
@@ -71,26 +71,32 @@ int ef(int l, int r, node x) {
     return ans;
 }
 int fl(int l, int r, node x) {
-    int ans = 1, mid;
-    while (l <= r) {
-        mid = (l + r) >> 1;
+    int ans = 1, mid = r;
+    while (l <= mid) {
         if ((x - a[mid - 1]) * (a[mid] - a[mid - 1]) < 0) {
             ans = mid;
-            l = mid + 1;
+            break;
         }
-        else r = mid - 1;
+        mid -= lim;
+    }
+    for (int i = 1; i < lim; ++i) {
+        mid = ans + 1;
+        if ((x - a[mid - 1]) * (a[mid] - a[mid - 1]) < 0) ans = mid;
     }
     return ans;
 }
 int fr(int l, int r, node x) {
-    int ans = top + 1, mid;
-    while (l <= r) {
-        mid = (l + r) >> 1;
+    int ans = top + 1, mid = l;
+    while (mid <= r) {
         if ((a[mid % top + 1] - x) * (a[mid] - x) < 0) {
             ans = mid;
-            r = mid - 1;
+            break;
         }
-        else l = mid + 1;
+        mid += lim;
+    }
+    for (int i = 1; i < lim; ++i) {
+        mid = ans - 1;
+        if ((a[mid % top + 1] - x) * (a[mid] - x) < 0) ans = mid;
     }
     return ans;
 }
@@ -131,7 +137,7 @@ int main () {
         }
     }
     std::sort(a + 2, a + k + 1, cmp);
-    tubao();
+    build();
     solve();
     all = ans;
 
@@ -145,7 +151,7 @@ int main () {
         }
     }
     std::sort(a + 2, a + k + 1, cmp);
-    tubao();
+    build();
     _solve();
     all = max(all, ans);
 
