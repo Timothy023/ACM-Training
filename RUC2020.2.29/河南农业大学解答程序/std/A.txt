@@ -1,0 +1,144 @@
+﻿#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int maxn = 1e5 + 100;
+int gcd(int x, int y){
+	return y == 0 ? x : gcd(y, x%y);
+}
+int lcm(int x, int y){
+	return x*y / gcd(x, y);
+}
+struct fac{//分数类
+	int a, b;
+	fac(){}
+	fac(int _a, int _b){
+		a = _a, b = _b;
+	}
+	void reduce(){
+		int x = gcd(a, b);
+		a /= x, b /= x;
+	};
+	fac operator=(int x){
+		a = x, b = 1;
+		return *this;
+	};
+	fac operator=(const fac x){
+		a = x.a, b = x.b;
+		reduce();
+		return *this;
+	};
+	fac operator+(const fac x){
+		return fac(b*x.a + a*x.b, b*x.b);
+	}
+	fac operator - (const fac x){
+		return fac(a*x.b - b*x.a, b*x.b);
+	};
+	fac operator * (const fac x){
+		return fac(a*x.a, b*x.b);
+	};
+	fac operator / (const fac x){
+		return fac(a*x.b, b*x.a);
+	};
+	bool operator < (const fac x){
+		return a*x.b < b*x.a;
+	};
+	bool operator == (const fac x){
+		return a*x.b == b*x.a;
+	};
+	void print(){
+		if (b == 1)printf("%d\n", a);
+		else printf("%d/%d\n", a, b);
+	};
+};
+inline fac Abs(fac x){
+	int p = x.a > 0 ? x.a : -x.a, q = x.b > 0 ? x.b : -x.b;
+	return fac(p, q);
+}
+
+fac ans[100];//解
+fac M[100][100];//求解矩阵  存方程的系数
+int Ans[100];//整数解
+int cnt, c1, c2, flag = 1, N, K;//cnt元素个数 c1反应物 c2总数
+bool solve(){
+	ans[c2] = 1;
+	for (int i = 1; i <= cnt; i++)
+	for (int j = 1; j <= c2; j++)
+		M[i][j].b = 1;
+
+	for (int i = 1; i <= cnt; i++)
+		M[i][c2].a = -M[i][c2].a;
+
+	N = c2 - 1, K = cnt;//N列 K行
+	for (int k = 1; k <= N; k++){
+		fac maxm = fac(-1, 1);
+		int maxi;
+		for (int i = k; i <= K; i++)
+		if (maxm < Abs(M[i][k]))
+			maxm = Abs(M[i][k]), maxi = i;
+		if (maxm == fac(0, 1))
+			return false;
+		if (maxi != k)
+		for (int j = 1; j <= N + 1; j++){
+			swap(M[k][j], M[maxi][j]);
+		}
+		fac tmp = M[k][k];
+		for (int j = 1; j <= N + 1; j++)
+			M[k][j] = M[k][j] / tmp;
+		for (int i = k - 1 ? 1 : 2; i <= K; i++){
+			if (i == k)continue;
+			fac tmp = M[i][k];
+			for (int j = 1; j <= N + 1; j++)
+				M[i][j] = M[i][j] - tmp*M[k][j];
+		}
+	}
+	return true;
+}
+int main(){
+	map < string, int>mp;
+	string ss;
+	while (cin >> ss){
+		int x;
+		scanf("%d", &x);
+		if (ss == "0"&&x == 0)
+			break;
+		c2++;
+		map<int, int>num;//重复次数
+		if (ss == "+1"){//左边
+			for (int i = 1; i <= x; i++){
+				string s; int p;
+				cin >> s >> p;
+				if (mp[s] == 0){//新出现的元素
+					cnt++;//行++
+					mp[s] = cnt;
+				}
+				num[mp[s]] += p;
+				M[mp[s]][c2] = num[mp[s]];
+			}
+		}
+		else{
+			for (int i = 1; i <= x; i++){
+				string s; int p;
+				cin >> s >> p;
+				if (mp[s] == 0){//新出现的元素
+					cnt++;//行++
+					mp[s] = cnt;
+				}
+				num[mp[s]] -= p;
+				M[mp[s]][c2] = num[mp[s]];
+			}
+		}
+	}
+	if (solve())
+	for (int i = 1; i <= c2 - 1; i++)
+		ans[i] = M[i][N + 1];
+	//否则无解
+	int tmp = lcm(ans[1].b, ans[2].b);
+	for (int i = 3; i <= c2; i++)
+		tmp = lcm(tmp, ans[i].b);
+	for (int i = 1; i <= c2; i++)
+		Ans[i] = ans[i].a*tmp / ans[i].b;
+	for (int i = 1; i <= c2; i++)
+		cout << Ans[i] << " ";
+	cout << endl;
+	return 0;
+}

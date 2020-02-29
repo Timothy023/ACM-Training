@@ -1,0 +1,54 @@
+﻿#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 1e7 + 100;
+const int MAXM = 4e3 + 100;
+
+struct Edge
+{
+	int u, v, w;
+	bool operator < (const Edge &oth) const {
+		return w < oth.w;
+	}
+}p[MAXN];
+int fa[MAXM], n, M, X;
+
+int find_(int x) {
+	if (x != fa[x])
+		x = fa[x] = find_(fa[x]);
+	return x;
+}
+void unite(int x, int y) {
+	x = find_(x);
+	y = find_(y);
+	if (x != y)
+		fa[x] = y;
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)  //初始化每个父亲都是自己
+		fa[i] = i;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			int wi;
+			scanf("%d", &wi);
+			if (j < i)
+				continue;  // 只存一次即可
+			p[X++] = { i, j, wi };
+		}
+	}
+	sort(p, p + X); // 按照边权从小到大排序
+	for (int i = 0; i < X; i++) {
+		if (M == n - 1)          // 树生成好直接退出
+			break;
+		int ui = find_(p[i].u), vi = find_(p[i].v);
+		if (ui != vi) {  // 加入集合
+			M++;
+			unite(ui, vi);
+			printf("%d %d\n", p[i].u, p[i].v);
+		}
+	}
+	return 0;
+}

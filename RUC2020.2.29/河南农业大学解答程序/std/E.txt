@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+constexpr int maxn = 1e4 + 5;
+int cnt,n,m;
+std::unordered_map<std::string,int> mp;
+char s1[maxn],s2[maxn],s3[maxn];
+bool has[maxn][maxn],is[maxn][maxn];
+int main()
+{
+    scanf("%d%d",&n,&m);
+    for(int i=1;i<=n;i++)
+    {
+        scanf("%s%s%s",s1,s2,s3);
+        if(!mp[s1])
+            mp[s1]=++cnt;
+        if(!mp[s3])
+            mp[s3]=++cnt;
+        if(s2[0]=='i')
+            is[mp[s1]][mp[s3]]=true;
+        else
+            has[mp[s1]][mp[s3]]=true;
+    }
+    for(int i=1;i<=cnt;i++)
+        is[i][i]=true;
+    for(int k=1;k<=cnt;k++)    //is
+        for(int i=1;i<=cnt;i++)
+            for(int j=1;j<=cnt;j++)
+                is[i][j]|=is[i][k]&&is[k][j];
+    for(int k=1;k<=cnt;k++)    //has
+        for(int i=1;i<=cnt;i++)
+            for(int j=1;j<=cnt;j++)
+                has[i][j]|=(has[i][k]&&has[k][j])||(is[i][k]&&has[k][j])||(has[i][k]&&is[k][j]);
+    for(int i=1;i<=m;i++)
+    {
+        scanf("%s%s%s",s1,s2,s3);
+        if(s2[0]=='i')
+            printf("Query %d: ",i),puts(is[mp[s1]][mp[s3]]?"true":"false");
+        if(s2[0]=='h')
+            printf("Query %d: ",i),puts(has[mp[s1]][mp[s3]]?"true":"false");
+    }
+    return 0;
+}

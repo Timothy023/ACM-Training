@@ -1,0 +1,25 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main()
+{
+    int t;cin>>t;
+    getchar();
+    while(t--)
+    {
+        string s;
+        getline(cin,s);
+        int len=0;
+        auto get=[&](char c)
+        {
+            if(isupper(c))return c-'A';
+            if(isspace(c))return 26;
+            return 27; 
+        };
+        for(int i=1;s[i];i++)
+            len+=min((get(s[i])-get(s[i-1])+28)%28,(get(s[i-1])-get(s[i])+28)%28);
+        double sum=M_PI*30*2*1.0;
+        double ans=sum/28*len/15+s.size();
+        printf("%.10f\n",ans);
+    }
+    return 0;
+}

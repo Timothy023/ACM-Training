@@ -1,0 +1,48 @@
+﻿import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StreamTokenizer;
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+		StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+		PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+		in.nextToken();
+		int s = (int) in.nval;
+
+		int a[][] = new int[s][4];
+		for (int i = 0; i < s; i++) {
+			for (int j = 0; j < 4; j++) {
+				in.nextToken();
+				a[i][j] = (int) in.nval;
+			}
+		}
+		in.nextToken();
+		int t = (int) in.nval;
+
+		for (int i = 0; i < t; i++) {
+			int b[] = new int[4];
+			for (int j = 0; j < 4; j++) {
+				in.nextToken();
+				b[j] = (int) in.nval;
+			}
+			boolean f = true;
+			for (int[] c : a) {//通过叉积判断两点是否在直线同侧
+				f = f ^ ((c[2] - c[0]) * (b[3] - c[1]) - (c[3] - c[1]) * (b[2] - c[0]) < 0)
+						^ ((c[2] - c[0]) * (b[1] - c[1]) - (c[3] - c[1]) * (b[0] - c[0]) < 0);
+			}
+
+			if (f == true) {
+				out.println("same");
+				out.flush();
+			} else {
+				out.println("different");
+				out.flush();
+			}
+		}
+
+	}
+
+}

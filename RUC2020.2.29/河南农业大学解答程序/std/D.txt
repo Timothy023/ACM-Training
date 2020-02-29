@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+inline void Max(int &a, int b)
+{
+	if (a < b)
+		a = b;
+}
+const int N = 5e3 + 100;
+int a[N];
+int f[N], g[N], c[N]; //背包容量->最大收益 f前缀最大值 数值次数
+ 
+int main()
+{
+	int n, k, s; //物品 组数 总和
+	cin >> n >> k >> s;
+	for (int i = 0; i < n; ++i)
+		scanf("%d", &a[i]);
+	memset(f, -0x3f, sizeof(f)); f[0] = 0;
+	for (int i = 0; i < k; ++i) //枚举组
+	{
+		memset(g, 0, sizeof(g));
+		memset(c, 0, sizeof(c));
+		vector<int> vec;
+		for (int j = 0; j * k + i < n; ++j) //按照k余数分组并统计次数
+			if (c[a[j * k + i]]++ == 0)
+				vec.push_back(a[j * k + i]);
+		for (int j = 0; j <= s; ++j)
+			g[j] = max((j ? g[j - 1] : 0), f[j]);
+		for (int j = s; j >= 0; --j) //背包容量
+		{
+			f[j] += c[0]; //体积为0的物品需要在其它之前转移
+			for (auto v : vec)
+				if (v && j >= v)
+					Max(f[j], f[j - v] + c[v]);
+			Max(f[j], g[j]); //调整到一个不存在的数字
+		}
+	}
+	cout << n - f[s] << endl;
+
+	return 0;
+}
