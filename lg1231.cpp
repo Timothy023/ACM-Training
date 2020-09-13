@@ -49,7 +49,7 @@ int main () {
     scanf ("%d", &m);
     for (int i = 1; i <= m; ++i) {
         scanf ("%d%d", &x, &y);
-        addedge(n2 + n3 + x, y, 1);
+        addedge(n1 + n2 + n3 + x, n2 + y, 1);
     }
     hs[0] = sum;
     while (h[st] < sum) {
